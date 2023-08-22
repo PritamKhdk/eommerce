@@ -46,7 +46,7 @@ export function NavbarDefault() {
         className="p-1 font-normal"
       >
         <a href="/product" className="flex items-center  text-black">
-          Product
+          Products
         </a>
       </Typography>
       <Typography

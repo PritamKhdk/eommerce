@@ -2,7 +2,6 @@ import { createContext, useContext, useReducer } from "react";
 import reducer from "../reducer/cartReducer.js";
 import { cartinitState } from "../reducer/cartinitState.js";
 
-
 const CartContext = createContext();
 
 const CartProvider = ({ children }) => {

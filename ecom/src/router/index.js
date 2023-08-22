@@ -9,6 +9,7 @@ import { SimpleFooter } from "../component/Footer";
 import Products from "../pages/Products";
 import SingleProduct from "../pages/SingleProduct";
 import { Cart } from "../pages/Cart";
+// import Dataall from "../component/Dataall";
 // import AddToCart from "../component/Addtocart";
 
 

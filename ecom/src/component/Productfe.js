@@ -1,13 +1,11 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-// import { AppContext } from '../context/productContext';
+
 
 
 const Product = (curElem) => {
   const {id, name, image, price, category } = curElem;
-  // const {singleProduct}=useContext(AppContext)
-  // console.log("singleProduct",singleProduct)
-
+  console.log("di",curElem)
 
   return (
     <NavLink to={`/singleproduct/${id}`}>
@@ -17,7 +15,6 @@ const Product = (curElem) => {
         <div className="font-bold text-lg mb-1">{name}</div>
         <p className="text-gray-700 text-sm mb-2">{category}</p>
         <p className="text-gray-700 text-sm">{price}</p>
-        {/* {singleProduct.push(name,category,image)} */}
       </div>
     </div>
     </NavLink>

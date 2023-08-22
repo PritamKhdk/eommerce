@@ -1,12 +1,33 @@
+import React from 'react';
 import { Card, Typography } from "@material-tailwind/react";
 import { useCartContext } from "../context/cartContext";
-import Cookies from 'js-cookie';
+import { GiCancel } from 'react-icons/gi';
 
 const TABLE_HEAD = ["ID", "Color", "Amount", "Product", ""];
- 
+
 export function Cart() {
-  const { cartState } = useCartContext();
-  Cookies.get("cartstate",cartState)
+  const { cartState,cartDispatch} = useCartContext();
+  console.log(cartDispatch)
+  console.log("cartstaee",cartState)
+
+  if (cartState.cart.length === 0) {
+    return (
+      <Card className="h-full w-full flex items-center justify-center">
+        <Typography variant="h4" color="black" className="font-semibold">
+          Please add products to use the cart
+        </Typography>
+      </Card>
+    );
+  }
+
+ function handleRemoveFromCartClick(){
+  console.log("hellod")
+  cartDispatch({type:"DELETE_FROM_CART",
+})
+ }
+
+
+  const totalAmount = cartState.cart.reduce((total, item) => total + item.amount, 0);
 
   return (
     <Card className="h-full w-full overflow-scroll">
@@ -36,7 +57,7 @@ export function Cart() {
 
             return (
               <tr key={id}>
-                <td className={classes}>
+                     <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -72,22 +93,38 @@ export function Cart() {
                     {product}
                   </Typography>
                 </td>
+
                 <td className={classes}>
-                  <Typography
-                    as="a"
-                    href="#"
-                    variant="small"
-                    color="blue-gray"
-                    className="font-medium"
+                  <button
+                    color="blue"
+                    onClick={() => handleRemoveFromCartClick(id)}
                   >
-                    Edit
-                  </Typography>
+                   <GiCancel />
+                  </button>
                 </td>
               </tr>
+           
             );
           })}
         </tbody>
+    
+        <tfoot>
+          <tr>
+            <td colSpan={1}></td>
+            <td className="p-5 text-right">
+              <Typography variant="small" color="blue-gray" className="font-semibold">
+                Amount total
+              </Typography>
+            </td>
+            <td className="p-5">
+              <Typography variant="small" color="blue-gray" className="font-semibold">
+                ${totalAmount.toFixed(2)}
+              </Typography>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </Card>
   );
 }
+

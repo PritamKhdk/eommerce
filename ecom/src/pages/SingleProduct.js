@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { AppContext } from '../context/productContext';
+
 
 const SingleProduct = () => {
   const { id } = useParams();
-  // const {singleProduct}=useContext(AppContext);
-  // console.log("pr",singleProduct)
+
 
 
   return (
