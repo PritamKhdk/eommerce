@@ -9,6 +9,7 @@ import { SimpleFooter } from "../component/Footer";
 import Products from "../pages/Products";
 import SingleProduct from "../pages/SingleProduct";
 import { Cart } from "../pages/Cart";
+import Trypage from "../component/Trypage";
 // import Dataall from "../component/Dataall";
 // import AddToCart from "../component/Addtocart";
 
@@ -25,6 +26,7 @@ const Index = () => {
      <Route path="/singleproduct/:id" element={<SingleProduct />}></Route>
      <Route path="/cart" element={<Cart />}></Route>
      <Route path="*" element={<ErrorPage />}></Route>
+     <Route path="/try" element={<Trypage />}></Route>
      {/* <Route path="/addtocart" element={<AddToCart />}></Route> */}
 
     </Routes>

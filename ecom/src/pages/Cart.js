@@ -1,48 +1,69 @@
-import React from 'react';
-import { Card, Typography } from "@material-tailwind/react";
-import { useCartContext } from "../context/cartContext";
+import React, { useEffect, useState } from 'react';
+import { Card, Typography } from '@material-tailwind/react';
 import { GiCancel } from 'react-icons/gi';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
-const TABLE_HEAD = ["ID", "Color", "Amount", "Product", ""];
+const TABLE_HEAD = ['ID', 'Image', 'Color', 'Amount', 'Product', 'Remove Item'];
 
 export function Cart() {
-  const { cartState,cartDispatch} = useCartContext();
-  console.log(cartDispatch)
-  console.log("cartstaee",cartState)
+  const [cartItemsremove, setCartItemsremove] = useState(false);
+  const navigate= useNavigate()
 
-  if (cartState.cart.length === 0) {
+  const cookies = Object.keys(Cookies.get())
+    .filter((cookieName) => cookieName.startsWith('cart_product_'))
+    .map((cookieName) => {
+      const cookieValue = Cookies.get(cookieName);
+      try {
+        const parsedValue = JSON.parse(cookieValue);
+        return parsedValue;
+      } catch (error) {
+        return null;
+      }
+    })
+    .filter((cookieValue) => cookieValue !== null);
+
+  function handleRemoveFromCartClick(id) {
+    Cookies.remove(`cart_product_${id}`);
+    setCartItemsremove(!cartItemsremove);
+  }
+
+  useEffect(() => {}, [cartItemsremove]);
+
+  if (cookies.length === 0) {
     return (
       <Card className="h-full w-full flex items-center justify-center">
         <Typography variant="h4" color="black" className="font-semibold">
           Please add products to use the cart
         </Typography>
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={()=>(navigate("/product"))}>
+          Continue Shopping
+        </button>
       </Card>
     );
   }
 
- function handleRemoveFromCartClick(){
-  console.log("hellod")
-  cartDispatch({type:"DELETE_FROM_CART",
-})
- }
-
-
-  const totalAmount = cartState.cart.reduce((total, item) => total + item.amount, 0);
+  function handleClearCart() {
+    cookies.forEach((cookie) => {
+      Cookies.remove(`cart_product_${cookie.id}`);
+    });
+    setCartItemsremove(!cartItemsremove);
+  }
 
   return (
-    <Card className="h-full w-full overflow-scroll">
-      <table className="w-full min-w-max table-auto text-left">
-        <thead>
+    <div className="flex flex-col items-center mt-8">
+      <table className="w-full table-fixed text-left">
+        <thead className="bg-blue-100">
           <tr>
             {TABLE_HEAD.map((head) => (
               <th
                 key={head}
-                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                className="border border-blue-100 p-3"
               >
                 <Typography
                   variant="small"
                   color="blue-gray"
-                  className="font-normal leading-none opacity-70"
+                  className="font-semibold"
                 >
                   {head}
                 </Typography>
@@ -51,19 +72,21 @@ export function Cart() {
           </tr>
         </thead>
         <tbody>
-          {cartState.cart.map(({ id, color, amount, product }, index) => {
-            const isLast = index === cartState.cart.length - 1;
-            const classes = isLast ? "p-5" : "p-5 border-b border-blue-gray-50";
+          {cookies.map((cookie, index) => {
+            const classes =
+              index === cookies.length - 1
+                ? 'bg-blue-50'
+                : 'bg-white';
 
             return (
-              <tr key={id}>
-                     <td className={classes}>
+              <tr  key={cookie.id} className="hover:bg-sky-500">
+                <td className={classes}>
                   <Typography
                     variant="small"
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {id}
+                    {cookie.id}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -72,7 +95,7 @@ export function Cart() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {color}
+                  <img className="w-30 h-20 object-cover rounded" src={cookie.image}alt={cookie.name} ></img>
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -81,7 +104,7 @@ export function Cart() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {amount}
+                    {cookie.color}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -90,41 +113,59 @@ export function Cart() {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {product}
+                    {cookie.amount}
                   </Typography>
                 </td>
-
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {cookie.product}
+                  </Typography>
+                </td>
                 <td className={classes}>
                   <button
                     color="blue"
-                    onClick={() => handleRemoveFromCartClick(id)}
+                    onClick={() => handleRemoveFromCartClick(cookie.id)}
                   >
-                   <GiCancel />
+                    <GiCancel />
                   </button>
                 </td>
               </tr>
-           
+     
             );
           })}
         </tbody>
-    
-        <tfoot>
+
+        <tfoot className="bg-blue-100">
           <tr>
-            <td colSpan={1}></td>
-            <td className="p-5 text-right">
-              <Typography variant="small" color="blue-gray" className="font-semibold">
-                Amount total
-              </Typography>
-            </td>
-            <td className="p-5">
-              <Typography variant="small" color="blue-gray" className="font-semibold">
-                ${totalAmount.toFixed(2)}
-              </Typography>
-            </td>
+          <td colSpan={2}></td>
+     <td className="p-5 text-right">
+      <Typography variant="small" color="blue-gray" className="font-semibold">
+        Total Amount
+      </Typography>
+    </td>
+    <td className="p-5">
+      <Typography variant="small" color="blue-gray" className="font-semibold">
+        {cookies.reduce((total, item) => total + item.amount, 0).toFixed(2)}
+      </Typography>
+    </td>
           </tr>
         </tfoot>
       </table>
-    </Card>
+
+      <div className="mt-4 flex justify-between w-1/2">
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={()=>(navigate("/product"))}>
+          Continue Shopping
+        </button>
+        <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" onClick={handleClearCart}>
+          Clear Cart
+        </button>
+      </div>
+    </div>
   );
 }
+
 
